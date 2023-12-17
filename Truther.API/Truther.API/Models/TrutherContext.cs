@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Truther.API.Models
 {
-    public partial class TrutherContext : DbContext
+    public partial class TrutherContext : IdentityUserContext<User>
     {
         public TrutherContext()
         {
