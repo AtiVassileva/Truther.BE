@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Truther.API", "Truther.API\Truther.API.csproj", "{9F16223D-6BB0-4618-851B-A568CE47FD92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Truther.API", "Truther.API\Truther.API.csproj", "{9F16223D-6BB0-4618-851B-A568CE47FD92}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B57B319-931E-47AF-9F62-464B08838C4F}"
+	ProjectSection(SolutionItems) = preProject
+		databaseCreation.txt = databaseCreation.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
