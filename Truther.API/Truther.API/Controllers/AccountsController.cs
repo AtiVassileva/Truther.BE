@@ -37,10 +37,12 @@ namespace Truther.API.Controllers
                 return BadRequest("Username already taken!");
             }
 
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
             var newUser = new User
             {
                 Email = email,
-                Password = password,
+                Password = hashedPassword,
                 Username = username
             };
 
