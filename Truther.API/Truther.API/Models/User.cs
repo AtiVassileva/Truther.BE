@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Truther.API.Models
 {
-    public partial class User : IdentityUser
+    public partial class User
     {
         public User()
         {

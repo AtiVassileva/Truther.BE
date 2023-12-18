@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Truther.API.Models
 {
-    public partial class TrutherContext : IdentityUserContext<User>
+    public partial class TrutherContext : DbContext
     {
         public TrutherContext()
         {
