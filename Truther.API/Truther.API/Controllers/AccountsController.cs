@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Truther.API.Models;
+using Truther.API.Models.RequestModels;
 
 namespace Truther.API.Controllers
 {
@@ -23,27 +24,27 @@ namespace Truther.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(string email, string password, string username)
+        public async Task<IActionResult> Register(UserRegisterModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid registration data!");
             }
 
-            var isUsernameTaken = await _dbContext.Users.AnyAsync(u => u.Username == username);
+            var isUsernameTaken = await _dbContext.Users.AnyAsync(u => u.Username == model.Username);
 
             if (isUsernameTaken)
             {
                 return BadRequest("Username already taken!");
             }
 
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
             var newUser = new User
             {
-                Email = email,
+                Email = model.Email,
                 Password = hashedPassword,
-                Username = username
+                Username = model.Username
             };
 
             await _dbContext.Users.AddAsync(newUser);
