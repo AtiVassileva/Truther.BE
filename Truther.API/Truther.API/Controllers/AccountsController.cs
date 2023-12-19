@@ -18,9 +18,10 @@ namespace Truther.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return BadRequest("Not implemented yet.");
+            var accountsList = await _dbContext.Users.ToListAsync();
+            return Ok(accountsList);
         }
 
         [HttpPost]
