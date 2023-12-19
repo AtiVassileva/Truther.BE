@@ -27,6 +27,14 @@ namespace Truther.API.Controllers
             return Ok(accountsList);
         }
 
+        [HttpGet("CurrentUser")]
+        public ActionResult<string?> GetCurrentUserLoginToken()
+        {
+            var loginToken = _httpContextAccessor.HttpContext!.Session.GetString("LoginToken");
+            var result = loginToken ?? "No logged in user.";
+            return Ok(result);
+        }
+
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRegisterModel model)
         {
