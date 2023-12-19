@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Truther.API.Models;
 using Truther.API.Models.RequestModels;
@@ -11,10 +12,12 @@ namespace Truther.API.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly TrutherContext _dbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountsController(TrutherContext dbContext)
+        public AccountsController(TrutherContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
@@ -24,7 +27,7 @@ namespace Truther.API.Controllers
             return Ok(accountsList);
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRegisterModel model)
         {
             if (!ModelState.IsValid)
@@ -52,6 +55,34 @@ namespace Truther.API.Controllers
             await _dbContext.SaveChangesAsync();
 
             return Ok("Successful registration!");
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(UserLoginModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid login attempt!");
+            }
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
+
+            if (user == null)
+            {
+                return BadRequest("Invalid username!");
+            }
+
+            var isPasswordValid = BCrypt.Net.BCrypt.Verify(model.Password, user.Password);
+
+            if (!isPasswordValid)
+            {
+                return BadRequest("Wrong password!");
+            }
+
+            var loginToken = $"{model.Username}_{DateTime.Now.ToString(CultureInfo.InvariantCulture)}";
+            _httpContextAccessor.HttpContext!.Session.SetString("LoginToken", loginToken);
+
+            return Ok("Successfully logged in!");
         }
     }
 }
