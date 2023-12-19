@@ -28,11 +28,10 @@ namespace Truther.API.Controllers
         }
 
         [HttpGet("CurrentUser")]
-        public ActionResult<string?> GetCurrentUserLoginToken()
+        public string? GetCurrentUserLoginToken()
         {
             var loginToken = _httpContextAccessor.HttpContext!.Session.GetString("LoginToken");
-            var result = loginToken ?? "No logged in user.";
-            return Ok(result);
+            return loginToken;
         }
 
         [HttpPost("Register")]
@@ -91,6 +90,20 @@ namespace Truther.API.Controllers
             _httpContextAccessor.HttpContext!.Session.SetString("LoginToken", loginToken);
 
             return Ok("Successfully logged in!");
+        }
+
+        [HttpGet("Logout")]
+        public IActionResult Logout()
+        {
+            var currentUserToken = GetCurrentUserLoginToken();
+
+            if (string.IsNullOrEmpty(currentUserToken))
+            {
+                return BadRequest("Invalid logout attempt!");
+            }
+
+            _httpContextAccessor.HttpContext!.Session.SetString("LoginToken", string.Empty);
+            return Ok("Successfully logged out!");
         }
     }
 }
