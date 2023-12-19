@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Truther.API.Models
+﻿namespace Truther.API.Models
 {
     public partial class Post
     {
