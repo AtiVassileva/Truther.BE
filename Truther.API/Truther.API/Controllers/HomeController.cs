@@ -1,10 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Truther.API.Implementation;
+using Truther.API.Models;
 
 namespace Truther.API.Controllers
 {
     //This controllers is responsible for all operations regarding Truther post - for example: Create a post, Like a post, Comment on a post, Delete a post etc.
     public class HomeController : Controller
     {
+        private readonly SqlHelper _sqlHelper;
+
+        public HomeController(IConfiguration configuration)
+        {
+            _sqlHelper = new SqlHelper(configuration.GetConnectionString("DefaultConnection"));
+        }
+
         // GET: HomeController
         public ActionResult Index()
         {
@@ -12,9 +22,9 @@ namespace Truther.API.Controllers
         }
 
         // GET: HomeController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult<Post[]> GetPosts()
         {
-            return View();
+            return _sqlHelper.GetPosts().ToArray();
         }
 
         // GET: HomeController/Create
