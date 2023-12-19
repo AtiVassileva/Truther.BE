@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Truther.API.Models;
 using Truther.API.Models.RequestModels;
+using static Truther.API.Common.AlertMessages;
 
 namespace Truther.API.Controllers
 {
@@ -30,7 +31,7 @@ namespace Truther.API.Controllers
         [HttpGet("CurrentUser")]
         public string? GetCurrentUserLoginToken()
         {
-            var loginToken = _httpContextAccessor.HttpContext!.Session.GetString("LoginToken");
+            var loginToken = _httpContextAccessor.HttpContext!.Session.GetString(LoginTokenKey);
             return loginToken;
         }
 
@@ -39,14 +40,14 @@ namespace Truther.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid registration data!");
+                return BadRequest(InvalidRegistrationDataMsg);
             }
 
             var isUsernameTaken = await _dbContext.Users.AnyAsync(u => u.Username == model.Username);
 
             if (isUsernameTaken)
             {
-                return BadRequest("Username already taken!");
+                return BadRequest(UsernameTakenMsg);
             }
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
@@ -61,7 +62,7 @@ namespace Truther.API.Controllers
             await _dbContext.Users.AddAsync(newUser);
             await _dbContext.SaveChangesAsync();
 
-            return Ok("Successful registration!");
+            return Ok(SuccessfulRegistrationMsg);
         }
 
         [HttpPost("Login")]
@@ -69,27 +70,27 @@ namespace Truther.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid login attempt!");
+                return BadRequest(InvalidLoginAttemptMsg);
             }
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
 
             if (user == null)
             {
-                return BadRequest("Invalid username!");
+                return BadRequest(InvalidUsernameMsg);
             }
 
             var isPasswordValid = BCrypt.Net.BCrypt.Verify(model.Password, user.Password);
 
             if (!isPasswordValid)
             {
-                return BadRequest("Wrong password!");
+                return BadRequest(WrongPasswordMsg);
             }
 
             var loginToken = $"{model.Username}_{DateTime.Now.ToString(CultureInfo.InvariantCulture)}";
-            _httpContextAccessor.HttpContext!.Session.SetString("LoginToken", loginToken);
+            _httpContextAccessor.HttpContext!.Session.SetString(LoginTokenKey, loginToken);
 
-            return Ok("Successfully logged in!");
+            return Ok(SuccessfullyLoggedInMsg);
         }
 
         [HttpGet("Logout")]
@@ -99,11 +100,11 @@ namespace Truther.API.Controllers
 
             if (string.IsNullOrEmpty(currentUserToken))
             {
-                return BadRequest("Invalid logout attempt!");
+                return BadRequest(InvalidLogoutAttempt);
             }
 
-            _httpContextAccessor.HttpContext!.Session.SetString("LoginToken", string.Empty);
-            return Ok("Successfully logged out!");
+            _httpContextAccessor.HttpContext!.Session.SetString(LoginTokenKey, string.Empty);
+            return Ok(SuccessfullyLoggedOutMsg);
         }
     }
 }
