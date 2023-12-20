@@ -5,6 +5,7 @@
         public const string LoginTokenKey = "LoginToken";
 
         public const string InvalidRegistrationDataMsg = "Invalid registration data!";
+        public const string UnauthorizedToPerformMsg = "Error! You are unauthorized to perform this action!";
         public const string UsernameTakenMsg = "Username already taken!";
         public const string SuccessfulRegistrationMsg = "Successful registration!";
 
@@ -17,5 +18,8 @@
         public const string SuccessfullyLoggedOutMsg = "Successfully logged out!";
 
         public const string NonExistingCommentMsg = "Comment does not exist!";
+        public const string PostedCommentMsg = "Comment posted successfully!";
+        public const string EditedCommentMsg = "Comment edited successfully!";
+        public const string DeletedCommentMsg = "Comment deleted!";
     }
 }

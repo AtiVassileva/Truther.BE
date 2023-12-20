@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Truther.API.Infrastructure;
 using Truther.API.Models;
 using Truther.API.Models.RequestModels;
-using static Truther.API.Common.ValidationConstants;
 using static Truther.API.Common.AlertMessages;
+using static Truther.API.Common.ValidationConstants;
 
 namespace Truther.API.Controllers
 {
@@ -42,7 +42,7 @@ namespace Truther.API.Controllers
 
             if (currentUserId == -1)
             {
-                return Unauthorized();
+                return Unauthorized(UnauthorizedToPerformMsg);
             }
 
             var newComment = new Comment
@@ -55,7 +55,7 @@ namespace Truther.API.Controllers
             await _dbContext.Comments.AddAsync(newComment);
             await _dbContext.SaveChangesAsync();
 
-            return Ok(newComment.Id);
+            return Ok(PostedCommentMsg);
         }
 
         [HttpPut("{commentId}")]
@@ -66,17 +66,51 @@ namespace Truther.API.Controllers
                 return BadRequest(ContentLengthErrorMessage);
             }
 
-            var comment = await _dbContext.Comments.FirstOrDefaultAsync(c => c.Id == commentId);
+            var comment = await GetCommentById(commentId);
 
             if (comment == null)
             {
                 return BadRequest(NonExistingCommentMsg);
             }
 
+            var currentUserId = await _userExtensions.GetCurrentUserId();
+
+            if (currentUserId == -1 || currentUserId != comment.UserId)
+            {
+                return Unauthorized(UnauthorizedToPerformMsg);
+            }
+
             comment.Content = model.Content;
             await _dbContext.SaveChangesAsync();
+            return Ok(EditedCommentMsg);
+        }
 
-            return Ok();
+        [HttpDelete("{commentId}")]
+        public async Task<IActionResult> Delete(int commentId)
+        {
+            var comment = await GetCommentById(commentId);
+
+            if (comment == null)
+            {
+                return BadRequest(NonExistingCommentMsg);
+            }
+
+            var currentUserId = await _userExtensions.GetCurrentUserId();
+
+            if (currentUserId == -1 || currentUserId != comment.UserId)
+            {
+                return Unauthorized();
+            }
+
+            _dbContext.Comments.Remove(comment);
+            await _dbContext.SaveChangesAsync();
+            return Ok(DeletedCommentMsg);
+        }
+
+        private async Task<Comment?> GetCommentById(int commentId)
+        {
+            var comment = await _dbContext.Comments.FirstOrDefaultAsync(c => c.Id == commentId);
+            return comment;
         }
     }
 }
