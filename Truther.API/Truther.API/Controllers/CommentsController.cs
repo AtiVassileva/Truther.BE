@@ -37,8 +37,24 @@ namespace Truther.API.Controllers
                 return BadRequest(ContentLengthErrorMessage);
             }
 
+            var currentUserId = await _userExtensions.GetCurrentUserId();
 
-            return Ok();
+            if (currentUserId == -1)
+            {
+                return Unauthorized();
+            }
+
+            var newComment = new Comment
+            {
+                Content = model.Content,
+                PostId = postId,
+                UserId = currentUserId
+            };
+
+            await _dbContext.Comments.AddAsync(newComment);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(newComment.Id);
         }
     }
 }
