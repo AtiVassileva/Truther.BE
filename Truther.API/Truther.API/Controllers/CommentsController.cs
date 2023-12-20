@@ -4,6 +4,7 @@ using Truther.API.Infrastructure;
 using Truther.API.Models;
 using Truther.API.Models.RequestModels;
 using static Truther.API.Common.ValidationConstants;
+using static Truther.API.Common.AlertMessages;
 
 namespace Truther.API.Controllers
 {
@@ -55,6 +56,27 @@ namespace Truther.API.Controllers
             await _dbContext.SaveChangesAsync();
 
             return Ok(newComment.Id);
+        }
+
+        [HttpPut("{commentId}")]
+        public async Task<IActionResult> Edit(int commentId, CommentCreateModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ContentLengthErrorMessage);
+            }
+
+            var comment = await _dbContext.Comments.FirstOrDefaultAsync(c => c.Id == commentId);
+
+            if (comment == null)
+            {
+                return BadRequest(NonExistingCommentMsg);
+            }
+
+            comment.Content = model.Content;
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

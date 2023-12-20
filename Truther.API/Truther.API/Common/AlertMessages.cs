@@ -15,5 +15,7 @@
 
         public const string InvalidLogoutAttempt = "Invalid logout attempt!";
         public const string SuccessfullyLoggedOutMsg = "Successfully logged out!";
+
+        public const string NonExistingCommentMsg = "Comment does not exist!";
     }
 }
