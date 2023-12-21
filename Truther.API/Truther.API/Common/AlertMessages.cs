@@ -23,5 +23,6 @@
         public const string DeletedCommentMsg = "Comment deleted!";
 
         public const string ErrorOnLike = "Like count was not update propperly on like!";
+        public const string NonExistingPost = "Post was not found!";
     }
 }

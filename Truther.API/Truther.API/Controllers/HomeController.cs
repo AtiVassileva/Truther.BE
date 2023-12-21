@@ -17,25 +17,31 @@ namespace Truther.API.Controllers
         }
 
         [HttpGet]
+        [Route("/")]
         public ActionResult<Post[]> GetPosts()
         {
-
             return _sqlHelper.GetPosts().ToArray();
         }
 
+        [HttpGet]
+        [Route("{postId}")]
+        public ActionResult<Post> GetPost(Guid postId)
+        {
+            return _sqlHelper.GetPost(postId);
+        }
+
         [HttpPost]
-        public ActionResult Create([FromBody] Post post)
+        [Route("post")]
+        public Task Create([FromBody] Post post)
         {
             return _sqlHelper.CreatePost(post);
         }
 
         [HttpPatch]
-        [Route("{postId}")]
+        [Route("like/{postId}")]
         [ValidateAntiForgeryToken]
-        public ActionResult LikePost([FromRoute] Guid postId, IFormCollection collection)
+        public Task LikePost([FromRoute] Guid postId, IFormCollection collection)
         {
-            var postId = Request.Body.
-
            return _sqlHelper.LikePost(postId);
         }
     }
