@@ -70,7 +70,7 @@ namespace Truther.API.Controllers
 
             if (comment == null)
             {
-                return BadRequest(NonExistingCommentMsg);
+                return NotFound(NonExistingCommentMsg);
             }
 
             var currentUserId = await _userExtensions.GetCurrentUserId();
@@ -92,7 +92,7 @@ namespace Truther.API.Controllers
 
             if (comment == null)
             {
-                return BadRequest(NonExistingCommentMsg);
+                return NotFound(NonExistingCommentMsg);
             }
 
             var currentUserId = await _userExtensions.GetCurrentUserId();

@@ -21,5 +21,9 @@
         public const string PostedCommentMsg = "Comment posted successfully!";
         public const string EditedCommentMsg = "Comment edited successfully!";
         public const string DeletedCommentMsg = "Comment deleted!";
+
+        public const string NonExistingPostMsg = "Post does not exist!";
+
+        public const string SuccessfulShareMsg = "Post shared successfully!";
     }
 }
