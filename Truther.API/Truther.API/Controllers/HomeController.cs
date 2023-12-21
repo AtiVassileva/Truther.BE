@@ -1,83 +1,48 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Configuration;
+using Truther.API.Implementation;
+using Truther.API.Models;
 
 namespace Truther.API.Controllers
 {
     //This controllers is responsible for all operations regarding Truther post - for example: Create a post, Like a post, Comment on a post, Delete a post etc.
     public class HomeController : Controller
     {
-        // GET: HomeController
-        public ActionResult Index()
+        private readonly SqlHelper _sqlHelper;
+
+        public HomeController(IConfiguration configuration)
         {
-            return View();
+            _sqlHelper = new SqlHelper(configuration.GetConnectionString("DefaultConnection"));
         }
 
-        // GET: HomeController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        [Route("/")]
+        public ActionResult<Post[]> GetPosts()
         {
-            return View();
+            return _sqlHelper.GetPosts().ToArray();
         }
 
-        // GET: HomeController/Create
-        public ActionResult Create()
+        [HttpGet]
+        [Route("{postId}")]
+        public ActionResult<Post> GetPost(Guid postId)
         {
-            return View();
+            return _sqlHelper.GetPost(postId);
         }
 
-        // POST: HomeController/Create
         [HttpPost]
+        [Route("post")]
+        public Task Create([FromBody] Post post)
+        {
+            return _sqlHelper.CreatePost(post);
+        }
+
+        [HttpPatch]
+        [Route("like/{postId}")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public Task LikePost([FromRoute] Guid postId, IFormCollection collection)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HomeController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: HomeController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HomeController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: HomeController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+           return _sqlHelper.LikePost(postId);
         }
     }
 }
