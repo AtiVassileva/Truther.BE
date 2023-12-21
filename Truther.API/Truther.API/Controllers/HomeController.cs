@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Truther.API.Implementation;
 using Truther.API.Models;
@@ -15,79 +16,27 @@ namespace Truther.API.Controllers
             _sqlHelper = new SqlHelper(configuration.GetConnectionString("DefaultConnection"));
         }
 
-        // GET: HomeController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: HomeController/Details/5
+        [HttpGet]
         public ActionResult<Post[]> GetPosts()
         {
+
             return _sqlHelper.GetPosts().ToArray();
         }
 
-        // GET: HomeController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: HomeController/Create
         [HttpPost]
+        public ActionResult Create([FromBody] Post post)
+        {
+            return _sqlHelper.CreatePost(post);
+        }
+
+        [HttpPatch]
+        [Route("{postId}")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult LikePost([FromRoute] Guid postId, IFormCollection collection)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            var postId = Request.Body.
 
-        // GET: HomeController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: HomeController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HomeController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: HomeController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+           return _sqlHelper.LikePost(postId);
         }
     }
 }

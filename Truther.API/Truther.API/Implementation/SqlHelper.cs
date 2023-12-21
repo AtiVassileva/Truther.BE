@@ -56,12 +56,35 @@ namespace Truther.API.Implementation
 
                     using (var rowsAffected = command.ExecuteNonQueryAsync())
                     {
-                        if(rowsAffected != 1)
+                        if (rowsAffected != 1)
                         {
                             throw new Exception(AlertMessages.ErrorOnLike);
                         }
                     }
                 }
             }
+        }
+    }
+
+    public void CreatePost(Post post)
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            using (var command = new SqlCommand("INSERT INTO Posts (userId, title, content) VALUES (@user_guid, @title, @content)", connection))
+            {
+                command.Parameters.AddWithValue("@user_guid", post.UserId);
+                command.Parameters.AddWithValue("@title", post.Title);
+                command.Parameters.AddWithValue("@content", post.Content);
+
+                using (var rowsAffected = command.ExecuteNonQueryAsync())
+                {
+                    if (rowsAffected != 1)
+                    {
+                        throw new Exception(AlertMessages.ErrorOnLike);
+                    }
+                }
+            }
+        }
     }
 }
