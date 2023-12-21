@@ -31,66 +31,127 @@ namespace Truther.API.Models
         {
             modelBuilder.Entity<Comment>(entity =>
             {
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Content).HasColumnName("content");
+
+                entity.Property(e => e.PostId).HasColumnName("postId");
+
+                entity.Property(e => e.UserId).HasColumnName("userId");
+
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.Comments)
                     .HasForeignKey(d => d.PostId)
-                    .HasConstraintName("FK__Comments__PostId__300424B4");
+                    .HasConstraintName("FK__Comments__postId__36B12243");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Comments)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Comments__UserId__2F10007B");
+                    .HasConstraintName("FK__Comments__userId__35BCFE0A");
             });
 
             modelBuilder.Entity<Like>(entity =>
             {
+                entity.HasIndex(e => new { e.PostId, e.UserId }, "UQ__Likes__31B5D254F799991B")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Count)
+                    .HasColumnName("count")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.PostId).HasColumnName("postId");
+
+                entity.Property(e => e.UserId).HasColumnName("userId");
+
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.Likes)
                     .HasForeignKey(d => d.PostId)
-                    .HasConstraintName("FK__Likes__PostId__2B3F6F97");
+                    .HasConstraintName("FK__Likes__postId__300424B4");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Likes)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Likes__UserId__2C3393D0");
+                    .HasConstraintName("FK__Likes__userId__30F848ED");
             });
 
             modelBuilder.Entity<Post>(entity =>
             {
-                entity.Property(e => e.Title).HasMaxLength(255);
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Content).HasColumnName("content");
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createDate")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Title)
+                    .HasMaxLength(255)
+                    .HasColumnName("title");
+
+                entity.Property(e => e.UserId).HasColumnName("userId");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Posts)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Posts__UserId__286302EC");
+                    .HasConstraintName("FK__Posts__userId__2A4B4B5E");
             });
 
             modelBuilder.Entity<Share>(entity =>
             {
+                entity.HasIndex(e => new { e.PostId, e.UserId }, "UQ__Shares__31B5D254EBC0F654")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.PostId).HasColumnName("postId");
+
+                entity.Property(e => e.UserId).HasColumnName("userId");
+
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.Shares)
                     .HasForeignKey(d => d.PostId)
-                    .HasConstraintName("FK__Shares__PostId__32E0915F");
+                    .HasConstraintName("FK__Shares__postId__3B75D760");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Shares)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Shares__UserId__33D4B598");
+                    .HasConstraintName("FK__Shares__userId__3C69FB99");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Username, "UQ__Users__536C85E4BBB0193D")
+                entity.HasIndex(e => e.Email, "UQ__Users__AB6E6164099BF677")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__Users__A9D105347218F610")
+                entity.HasIndex(e => e.Username, "UQ__Users__F3DBC57230ED6C74")
                     .IsUnique();
 
-                entity.Property(e => e.Email).HasMaxLength(255);
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Password).HasMaxLength(255);
+                entity.Property(e => e.Email)
+                    .HasMaxLength(255)
+                    .HasColumnName("email");
 
-                entity.Property(e => e.Username).HasMaxLength(255);
+                entity.Property(e => e.Password)
+                    .HasMaxLength(255)
+                    .HasColumnName("password");
+
+                entity.Property(e => e.Username)
+                    .HasMaxLength(255)
+                    .HasColumnName("username");
             });
 
             OnModelCreatingPartial(modelBuilder);

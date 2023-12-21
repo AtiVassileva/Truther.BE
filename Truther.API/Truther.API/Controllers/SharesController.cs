@@ -19,8 +19,8 @@ namespace Truther.API.Controllers
             _userExtensions = userExtensions;
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetSharesByUser(int userId)
+        [HttpGet("{userId:guid}")]
+        public async Task<IActionResult> GetSharesByUser(Guid userId)
         {
             var shares = await _dbContext.Shares
                 .Where(sh => sh.UserId == userId)
@@ -28,12 +28,12 @@ namespace Truther.API.Controllers
             return Ok(shares);
         }
 
-        [HttpPost("{postId}")]
-        public async Task<IActionResult> Create(int postId)
+        [HttpPost("{postId:guid}")]
+        public async Task<IActionResult> Create(Guid postId)
         {
             var currentUserId = await _userExtensions.GetCurrentUserId();
 
-            if (currentUserId == -1)
+            if (currentUserId == Guid.Empty)
             {
                 return Unauthorized(UnauthorizedToPerformMsg);
             }
@@ -57,8 +57,8 @@ namespace Truther.API.Controllers
             return Ok(SuccessfulShareMsg);
         }
 
-        [HttpDelete("{shareId}")]
-        public async Task<IActionResult> Delete(int shareId)
+        [HttpDelete("{shareId:guid}")]
+        public async Task<IActionResult> Delete(Guid shareId)
         {
             var share = await _dbContext.Shares.FirstOrDefaultAsync(sh => sh.Id == shareId);
 
@@ -69,7 +69,7 @@ namespace Truther.API.Controllers
 
             var currentUserId = await _userExtensions.GetCurrentUserId();
 
-            if (currentUserId == -1 || currentUserId != share.UserId)
+            if (currentUserId == Guid.Empty || currentUserId != share.UserId)
             {
                 return Unauthorized(UnauthorizedToPerformMsg);
             }

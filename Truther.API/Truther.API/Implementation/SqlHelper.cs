@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Data.SqlClient;
 using Truther.API.Common;
+using Truther.API.Infrastructure;
 using Truther.API.Models;
 
 namespace Truther.API.Implementation;
 public class SqlHelper
 {
     private readonly string _connectionString;
+    private readonly UserExtensions _userExtensions = new(new TrutherContext(), new HttpContextAccessor());
 
     public SqlHelper(string connectionString)
     {
         _connectionString = connectionString;
     }
 
-    public Post[] GetPosts()
+    public async Task<Post[]> GetPostsAsync()
     {
         var posts = new List<Post>();
 
@@ -31,10 +30,10 @@ public class SqlHelper
                     {
                         var post = new Post
                         {
-                            Id = Convert.ToInt32(reader["Id"]),
-                            UserId = Convert.ToInt32(reader["UserId"]),
-                            Title = reader["Title"].ToString(),
-                            Content = reader["Content"].ToString()
+                            Id = new Guid(),
+                            UserId = await _userExtensions.GetCurrentUserId(),
+                            Title = reader["Title"].ToString()!,
+                            Content = reader["Content"].ToString()!
                         };
                         posts.Add(post);
                     }
@@ -45,7 +44,7 @@ public class SqlHelper
         return posts.ToArray();
     }
 
-    public Post GetPost(Guid postId)
+    public async Task<Post> GetPost(Guid postId)
     {
         using (var connection = new SqlConnection(_connectionString))
         {
@@ -61,10 +60,10 @@ public class SqlHelper
                     {
                         var post = new Post
                         {
-                            Id = Convert.ToInt32(reader["Id"]),
-                            UserId = Convert.ToInt32(reader["UserId"]),
-                            Title = reader["Title"].ToString(),
-                            Content = reader["Content"].ToString()
+                            Id = new Guid(),
+                            UserId = await _userExtensions.GetCurrentUserId(),
+                            Title = reader["Title"].ToString()!,
+                            Content = reader["Content"].ToString()!
                         };
 
                         return post;
@@ -105,7 +104,8 @@ public class SqlHelper
             connection.Open();
             using (var command = new SqlCommand("INSERT INTO Posts (userId, title, content) VALUES (@user_guid, @title, @content)", connection))
             {
-                command.Parameters.AddWithValue("@user_guid", post.UserId);
+                var currentUsedId = await _userExtensions.GetCurrentUserId();
+                command.Parameters.AddWithValue("@user_guid", currentUsedId);
                 command.Parameters.AddWithValue("@title", post.Title);
                 command.Parameters.AddWithValue("@content", post.Content);
 

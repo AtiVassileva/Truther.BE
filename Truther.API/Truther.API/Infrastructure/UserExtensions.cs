@@ -15,11 +15,11 @@ namespace Truther.API.Infrastructure
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<int> GetCurrentUserId()
+        public async Task<Guid> GetCurrentUserId()
         {
             if (!IsAuthenticated())
             {
-                return -1;
+                return Guid.Empty;
             }
 
             var loginToken = GetCurrentUserLoginToken()!;

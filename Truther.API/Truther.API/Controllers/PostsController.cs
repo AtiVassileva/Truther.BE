@@ -5,7 +5,9 @@ using Truther.API.Models;
 namespace Truther.API.Controllers
 {
     //This controllers is responsible for all operations regarding Truther post - for example: Create a post, Like a post, Comment on a post, Delete a post etc.
-    public class PostsController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PostsController : ControllerBase
     {
         private readonly SqlHelper _sqlHelper;
 
@@ -15,15 +17,15 @@ namespace Truther.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<Post[]> GetPosts()
+        public async Task<ActionResult<Post[]>> GetPosts()
         {
-            return _sqlHelper.GetPosts().ToArray();
+            return await _sqlHelper.GetPostsAsync();
         }
 
         [HttpGet("{postId:guid}")]
-        public ActionResult<Post> GetPost(Guid postId)
+        public async Task<ActionResult<Post>> GetPost(Guid postId)
         {
-            return _sqlHelper.GetPost(postId);
+            return await _sqlHelper.GetPost(postId);
         }
 
         [HttpPost]
@@ -32,7 +34,7 @@ namespace Truther.API.Controllers
             return _sqlHelper.CreatePost(post);
         }
 
-        [HttpPatch("like/{postId:guid}")]
+        [HttpPatch("Like/{postId:guid}")]
         [ValidateAntiForgeryToken]
         public Task LikePost([FromRoute] Guid postId, IFormCollection collection)
         {
