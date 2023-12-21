@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using Truther.API.Common;
 using Truther.API.Models;
 
 namespace Truther.API.Implementation
@@ -43,5 +44,24 @@ namespace Truther.API.Implementation
 
             return posts;
         }
+
+        public void LikePost(Guid postId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = new SqlCommand("UPDATE LIKES SET count = count + 1 WHERE postId = @PostId", connection))
+                {
+                    command.Parameters.AddWithValue("@PostId", postId);
+
+                    using (var rowsAffected = command.ExecuteNonQueryAsync())
+                    {
+                        if(rowsAffected != 1)
+                        {
+                            throw new Exception(AlertMessages.ErrorOnLike);
+                        }
+                    }
+                }
+            }
     }
 }
