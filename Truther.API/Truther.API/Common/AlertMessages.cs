@@ -22,6 +22,12 @@
         public const string EditedCommentMsg = "Comment edited successfully!";
         public const string DeletedCommentMsg = "Comment deleted!";
 
+        public const string NonExistingPostMsg = "Post does not exist!";
+
+        public const string SuccessfulShareMsg = "Post shared successfully!";
+        public const string NonExistingShareMsg = "Share does not exist!";
+        public const string DeletedShareMsg = "Share deleted!";
+
         public const string ErrorOnLike = "Like count was not update propperly on like!";
         public const string NonExistingPost = "Post was not found!";
     }

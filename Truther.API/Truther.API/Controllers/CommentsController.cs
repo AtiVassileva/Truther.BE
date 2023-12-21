@@ -21,8 +21,8 @@ namespace Truther.API.Controllers
             _userExtensions = userExtensions;
         }
 
-        [HttpGet("{postId}")]
-        public async Task<IActionResult> GetCommentsByPost(int postId)
+        [HttpGet("{postId:guid}")]
+        public async Task<IActionResult> GetCommentsByPost(Guid postId)
         {
             var comments = await _dbContext.Comments
                 .Where(c => c.PostId == postId)
@@ -30,8 +30,8 @@ namespace Truther.API.Controllers
             return Ok(comments);
         }
 
-        [HttpPost("{postId}")]
-        public async Task<IActionResult> Post(int postId, CommentCreateModel model)
+        [HttpPost("{postId:guid}")]
+        public async Task<IActionResult> Post(Guid postId, CommentCreateModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -40,7 +40,7 @@ namespace Truther.API.Controllers
 
             var currentUserId = await _userExtensions.GetCurrentUserId();
 
-            if (currentUserId == -1)
+            if (currentUserId == Guid.Empty)
             {
                 return Unauthorized(UnauthorizedToPerformMsg);
             }
@@ -58,8 +58,8 @@ namespace Truther.API.Controllers
             return Ok(PostedCommentMsg);
         }
 
-        [HttpPut("{commentId}")]
-        public async Task<IActionResult> Edit(int commentId, CommentCreateModel model)
+        [HttpPut("{commentId:guid}")]
+        public async Task<IActionResult> Edit(Guid commentId, CommentCreateModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -70,12 +70,12 @@ namespace Truther.API.Controllers
 
             if (comment == null)
             {
-                return BadRequest(NonExistingCommentMsg);
+                return NotFound(NonExistingCommentMsg);
             }
 
             var currentUserId = await _userExtensions.GetCurrentUserId();
 
-            if (currentUserId == -1 || currentUserId != comment.UserId)
+            if (currentUserId == Guid.Empty || currentUserId != comment.UserId)
             {
                 return Unauthorized(UnauthorizedToPerformMsg);
             }
@@ -85,21 +85,21 @@ namespace Truther.API.Controllers
             return Ok(EditedCommentMsg);
         }
 
-        [HttpDelete("{commentId}")]
-        public async Task<IActionResult> Delete(int commentId)
+        [HttpDelete("{commentId:guid}")]
+        public async Task<IActionResult> Delete(Guid commentId)
         {
             var comment = await GetCommentById(commentId);
 
             if (comment == null)
             {
-                return BadRequest(NonExistingCommentMsg);
+                return NotFound(NonExistingCommentMsg);
             }
 
             var currentUserId = await _userExtensions.GetCurrentUserId();
 
-            if (currentUserId == -1 || currentUserId != comment.UserId)
+            if (currentUserId == Guid.Empty || currentUserId != comment.UserId)
             {
-                return Unauthorized();
+                return Unauthorized(UnauthorizedToPerformMsg);
             }
 
             _dbContext.Comments.Remove(comment);
@@ -107,7 +107,7 @@ namespace Truther.API.Controllers
             return Ok(DeletedCommentMsg);
         }
 
-        private async Task<Comment?> GetCommentById(int commentId)
+        private async Task<Comment?> GetCommentById(Guid commentId)
         {
             var comment = await _dbContext.Comments.FirstOrDefaultAsync(c => c.Id == commentId);
             return comment;
