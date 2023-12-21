@@ -99,7 +99,7 @@ namespace Truther.API.Controllers
 
             if (currentUserId == -1 || currentUserId != comment.UserId)
             {
-                return Unauthorized();
+                return Unauthorized(UnauthorizedToPerformMsg);
             }
 
             _dbContext.Comments.Remove(comment);

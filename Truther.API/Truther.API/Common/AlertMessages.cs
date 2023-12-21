@@ -25,5 +25,7 @@
         public const string NonExistingPostMsg = "Post does not exist!";
 
         public const string SuccessfulShareMsg = "Post shared successfully!";
+        public const string NonExistingShareMsg = "Share does not exist!";
+        public const string DeletedShareMsg = "Share deleted!";
     }
 }

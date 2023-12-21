@@ -56,5 +56,27 @@ namespace Truther.API.Controllers
 
             return Ok(SuccessfulShareMsg);
         }
+
+        [HttpDelete("{shareId}")]
+        public async Task<IActionResult> Delete(int shareId)
+        {
+            var share = await _dbContext.Shares.FirstOrDefaultAsync(sh => sh.Id == shareId);
+
+            if (share == null)
+            {
+                return NotFound(NonExistingShareMsg);
+            }
+
+            var currentUserId = await _userExtensions.GetCurrentUserId();
+
+            if (currentUserId == -1 || currentUserId != share.UserId)
+            {
+                return Unauthorized(UnauthorizedToPerformMsg);
+            }
+
+            _dbContext.Shares.Remove(share);
+            await _dbContext.SaveChangesAsync();
+            return Ok(DeletedShareMsg);
+        }
     }
 }
