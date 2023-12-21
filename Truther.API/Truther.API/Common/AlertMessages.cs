@@ -21,5 +21,7 @@
         public const string PostedCommentMsg = "Comment posted successfully!";
         public const string EditedCommentMsg = "Comment edited successfully!";
         public const string DeletedCommentMsg = "Comment deleted!";
+
+        public const string ErrorOnLike = "Like count was not update propperly on like!";
     }
 }
