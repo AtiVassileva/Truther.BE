@@ -6,11 +6,11 @@ namespace Truther.API.Models.RequestModels
     public class UserLoginModel
     {
         [Required(ErrorMessage = RequiredUsernameErrorMessage)]
-        [MinLength(DefaultMinLength, ErrorMessage = UsernameMinLengthError)]
+        [MinLength(DefaultMinLength, ErrorMessage = UsernameMinLengthErrorMessage)]
         public string Username { get; set; } = null!;
 
         [Required(ErrorMessage = RequiredPasswordErrorMessage)]
-        [MinLength(PasswordMinLength, ErrorMessage = PasswordMinLengthError)]
+        [MinLength(PasswordMinLength, ErrorMessage = PasswordMinLengthErrorMessage)]
         public string Password { get; set; } = null!;
     }
 }

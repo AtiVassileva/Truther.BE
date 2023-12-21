@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Truther.API.Infrastructure;
 using Truther.API.Models;
 using Truther.API.Models.RequestModels;
 using static Truther.API.Common.AlertMessages;
@@ -14,11 +15,13 @@ namespace Truther.API.Controllers
     {
         private readonly TrutherContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserExtensions _userExtensions;
 
-        public AccountsController(TrutherContext dbContext, IHttpContextAccessor httpContextAccessor)
+        public AccountsController(TrutherContext dbContext, IHttpContextAccessor httpContextAccessor, UserExtensions userExtensions)
         {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;
+            _userExtensions = userExtensions;
         }
 
         [HttpGet]
@@ -26,13 +29,6 @@ namespace Truther.API.Controllers
         {
             var accountsList = await _dbContext.Users.ToListAsync();
             return Ok(accountsList);
-        }
-
-        [HttpGet("CurrentUser")]
-        public string? GetCurrentUserLoginToken()
-        {
-            var loginToken = _httpContextAccessor.HttpContext!.Session.GetString(LoginTokenKey);
-            return loginToken;
         }
 
         [HttpPost("Register")]
@@ -96,9 +92,7 @@ namespace Truther.API.Controllers
         [HttpGet("Logout")]
         public IActionResult Logout()
         {
-            var currentUserToken = GetCurrentUserLoginToken();
-
-            if (string.IsNullOrEmpty(currentUserToken))
+            if (!_userExtensions.IsAuthenticated())
             {
                 return BadRequest(InvalidLogoutAttempt);
             }
