@@ -8,6 +8,7 @@
         public const string UnauthorizedToPerformMsg = "Error! You are unauthorized to perform this action!";
         public const string UsernameTakenMsg = "Username already taken!";
         public const string SuccessfulRegistrationMsg = "Successful registration!";
+        public const string UserNotFoundMsg = "User not found!";
 
         public const string InvalidLoginAttemptMsg = "Invalid login attempt!";
         public const string InvalidUsernameMsg = "Invalid username!";

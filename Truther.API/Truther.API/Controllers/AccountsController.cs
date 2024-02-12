@@ -30,6 +30,19 @@ namespace Truther.API.Controllers
             var accountsList = await _dbContext.Users.ToListAsync();
             return Ok(accountsList);
         }
+        
+        [HttpGet("{userId:guid}")]
+        public async Task<IActionResult> GetUser(Guid userId)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user ==  null)
+            {
+                return NotFound(UserNotFoundMsg);
+            }
+
+            return Ok(user);
+        }
 
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRegisterModel model)
