@@ -8,6 +8,7 @@ var configuration = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors();
 
 builder.Services.AddScoped<UserExtensions>();
 builder.Services.AddDbContext<TrutherContext>(options =>
@@ -39,5 +40,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseSession();
+
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(_ => true)
+    .AllowCredentials());
 
 app.Run();
